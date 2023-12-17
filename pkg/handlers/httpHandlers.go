@@ -64,7 +64,6 @@ func (h *HttpHandler) HandleDownload(w http.ResponseWriter, r *http.Request) {
 
 		filePath, fileMetadata, err := h.objects.GetObject(fileName)
 
-		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Object-Name", fileMetadata.ObjectName)
 		http.ServeFile(w, r, filePath)
 
