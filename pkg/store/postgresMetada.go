@@ -1,7 +1,7 @@
 package store
 
 import (
-	"github.com/abdulloh76/storage-server/pkg/types"
+	"github.com/abdulloh76/storage-manager/pkg/types"
 	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

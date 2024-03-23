@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/abdulloh76/storage-server/pkg/domain"
+	"github.com/abdulloh76/storage-manager/pkg/domain"
 )
 
 type HttpHandler struct {

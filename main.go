@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/abdulloh76/storage-server/pkg/domain"
-	"github.com/abdulloh76/storage-server/pkg/handlers"
-	"github.com/abdulloh76/storage-server/pkg/store"
+	"github.com/abdulloh76/storage-manager/pkg/domain"
+	"github.com/abdulloh76/storage-manager/pkg/handlers"
+	"github.com/abdulloh76/storage-manager/pkg/store"
 )
 
 func main() {

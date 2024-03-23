@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/abdulloh76/storage-server/pkg/types"
+	"github.com/abdulloh76/storage-manager/pkg/types"
 	"github.com/google/uuid"
 )
 
