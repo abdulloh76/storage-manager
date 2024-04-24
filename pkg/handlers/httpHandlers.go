@@ -64,13 +64,13 @@ func (h *HttpHandler) HandleDownload(w http.ResponseWriter, r *http.Request) {
 
 		filePath, fileMetadata, err := h.objects.GetObject(fileName)
 
-		w.Header().Set("Object-Name", fileMetadata.ObjectName)
-		http.ServeFile(w, r, filePath)
-
 		if err != nil {
 			http.Error(w, "File not found", http.StatusNotFound)
 			return
 		}
+
+		w.Header().Set("Object-Name", fileMetadata.ObjectName)
+		http.ServeFile(w, r, filePath)
 	} else {
 		// Handle invalid HTTP method
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

@@ -32,7 +32,7 @@ func (f *Objects) UploadObject(file multipart.File, fileHeader *multipart.FileHe
 	if _, err := os.Stat(folderName); os.IsNotExist(err) {
 		err := os.MkdirAll(folderName, 0755)
 		if err != nil {
-			return fmt.Errorf("Error creating directory")
+			return fmt.Errorf("error creating directory")
 		}
 	}
 
@@ -52,7 +52,7 @@ func (f *Objects) UploadObject(file multipart.File, fileHeader *multipart.FileHe
 	fileMetadataId, err := f.store.CreateMetadata(&metadata)
 
 	if err != nil {
-		return fmt.Errorf("Error while saving metadata")
+		return fmt.Errorf("error while saving metadata")
 	}
 
 	fileNameFromMetadata := fmt.Sprintf("%s%s", fileMetadataId, ext)
@@ -61,14 +61,14 @@ func (f *Objects) UploadObject(file multipart.File, fileHeader *multipart.FileHe
 	fileName := fmt.Sprintf("%s/%s", folderName, fileNameFromMetadata)
 	outFile, err := os.Create(fileName)
 	if err != nil {
-		return fmt.Errorf("Error creating file")
+		return fmt.Errorf("error creating file")
 	}
 	defer outFile.Close()
 
 	// Copy the content from the uploaded file to the new file
 	_, err = io.Copy(outFile, file)
 	if err != nil {
-		return fmt.Errorf("Error copying file")
+		return fmt.Errorf("error copying file")
 	}
 
 	return nil

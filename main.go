@@ -26,7 +26,7 @@ func main() {
 
 	handlers.RegisterHandlers(HttpHandler)
 
-	fmt.Println("Server running on http://localhost" + PORT)
+	fmt.Println("Server running on http://localhost:" + PORT)
 	err = http.ListenAndServe(":"+PORT, nil)
 	if err != nil {
 		fmt.Println("Error starting server:", err)
