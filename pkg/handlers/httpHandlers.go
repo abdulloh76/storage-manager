@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/abdulloh76/storage-manager/pkg/domain"
@@ -25,14 +26,12 @@ func RegisterHandlers(handler *HttpHandler) {
 
 func (h *HttpHandler) HandleUpload(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		// Parse the multipart form data
 		err := r.ParseMultipartForm(10 << 20) // 10 MB limit
 		if err != nil {
 			http.Error(w, "Unable to parse form", http.StatusBadRequest)
 			return
 		}
 
-		// Get the file from the request body
 		file, fileHeader, err := r.FormFile("file")
 		if err != nil {
 			http.Error(w, "Error retrieving file from body", http.StatusBadRequest)
@@ -40,15 +39,14 @@ func (h *HttpHandler) HandleUpload(w http.ResponseWriter, r *http.Request) {
 		}
 		defer file.Close()
 
-		err = h.objects.UploadObject(file, fileHeader)
+		filename, err := h.objects.UploadObject(file, fileHeader)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		fmt.Fprintf(w, "File uploaded and stored successfully")
+		fmt.Fprintf(w, "File uploaded and stored successfully: %s", filename)
 	} else {
-		// Handle invalid HTTP method
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
@@ -62,17 +60,33 @@ func (h *HttpHandler) HandleDownload(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		filePath, fileMetadata, err := h.objects.GetObject(fileName)
-
+		fileUrl, fileMetadata, err := h.objects.GetObject(fileName)
 		if err != nil {
 			http.Error(w, "File not found", http.StatusNotFound)
 			return
 		}
 
+		response, err := http.Get(fileUrl) // send the GET request
+		if err != nil {
+			fmt.Println("error sending GET request:", err)
+			return
+		}
+		defer response.Body.Close()
+
+		if response.StatusCode != http.StatusOK {
+			fmt.Printf("external server returned non-OK status code %d: %s", response.StatusCode, err)
+			return
+		}
+
+		w.Header().Set("Content-Type", response.Header.Get("Content-Type"))
 		w.Header().Set("Object-Name", fileMetadata.ObjectName)
-		http.ServeFile(w, r, filePath)
+
+		_, err = io.Copy(w, response.Body)
+		if err != nil {
+			http.Error(w, "Error copying file contents to client", http.StatusInternalServerError)
+			return
+		}
 	} else {
-		// Handle invalid HTTP method
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }

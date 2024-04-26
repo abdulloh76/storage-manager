@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/abdulloh76/storage-manager/pkg/domain"
 	"github.com/abdulloh76/storage-manager/pkg/handlers"
@@ -19,9 +20,12 @@ func main() {
 
 	PORT := os.Getenv("PORT")
 	DATABASE_URL := os.Getenv("DATABASE_URL")
+	STORAGE_SERVERS := strings.Split(os.Getenv("STORAGE_SERVERS"), ",")
+	UPLOAD_ENDPOINT := os.Getenv("UPLOAD_ENDPOINT")
+	DOWNLOAD_ENDPOINT := os.Getenv("DOWNLOAD_ENDPOINT")
 
 	postgresMetadataStore := store.NewPostgresDBStore(DATABASE_URL)
-	objectDomain := domain.NewObjectsDomain(postgresMetadataStore)
+	objectDomain := domain.NewObjectsDomain(postgresMetadataStore, STORAGE_SERVERS, UPLOAD_ENDPOINT, DOWNLOAD_ENDPOINT)
 	HttpHandler := handlers.NewHttpHandler(objectDomain)
 
 	handlers.RegisterHandlers(HttpHandler)
