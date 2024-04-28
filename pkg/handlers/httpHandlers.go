@@ -60,28 +60,16 @@ func (h *HttpHandler) HandleDownload(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fileUrl, fileMetadata, err := h.objects.GetObject(fileName)
+		file, objectName, err := h.objects.GetObject(fileName)
 		if err != nil {
 			http.Error(w, "File not found", http.StatusNotFound)
 			return
 		}
 
-		response, err := http.Get(fileUrl) // send the GET request
-		if err != nil {
-			fmt.Println("error sending GET request:", err)
-			return
-		}
-		defer response.Body.Close()
+		// w.Header().Set("Content-Type", response.Header.Get("Content-Type"))
+		w.Header().Set("Object-Name", objectName)
 
-		if response.StatusCode != http.StatusOK {
-			fmt.Printf("external server returned non-OK status code %d: %s", response.StatusCode, err)
-			return
-		}
-
-		w.Header().Set("Content-Type", response.Header.Get("Content-Type"))
-		w.Header().Set("Object-Name", fileMetadata.ObjectName)
-
-		_, err = io.Copy(w, response.Body)
+		_, err = io.Copy(w, file)
 		if err != nil {
 			http.Error(w, "Error copying file contents to client", http.StatusInternalServerError)
 			return

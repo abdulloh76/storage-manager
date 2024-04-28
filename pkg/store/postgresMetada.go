@@ -33,9 +33,9 @@ func (m *PostgresMetadataStore) CreateMetadata(fileMetadata *types.MetadataModel
 	return fileMetadata.ID, err
 }
 
-func (m *PostgresMetadataStore) GetMetadata(id uuid.UUID) (*types.MetadataModel, error) {
-	var metadata *types.MetadataModel
-	err := m.db.First(&metadata, "id = ?", id).Error
+func (m *PostgresMetadataStore) GetMetadata(id uuid.UUID) ([]types.MetadataModel, error) {
+	var metadata []types.MetadataModel
+	err := m.db.Where("file_name_id = ?", id).Find(&metadata).Error
 
 	return metadata, err
 }

@@ -9,6 +9,7 @@ type MetadataModel struct {
 	gorm.Model
 	ID            uuid.UUID `gorm:"type:uuid;primaryKey"`
 	FileExtension string
+	FileNameID    uuid.UUID `gorm:"type:uuid"`
 
 	// * these are fields according which uuid has to be generated
 	// todo think of something about object name type ex what if it contains russian letters
